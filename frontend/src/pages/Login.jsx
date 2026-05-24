@@ -1,10 +1,9 @@
 import LoginForm from '../components/auth/LoginForm';
-import AuthLayout from '../components/auth/AuthLayout';
 
 const Login = () => (
-  <AuthLayout>
+  // <AuthLayout>
     <LoginForm />
-  </AuthLayout>
+  // </AuthLayout>
 );
 
 export default Login;
