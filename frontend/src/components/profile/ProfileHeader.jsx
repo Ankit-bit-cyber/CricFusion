@@ -1,5 +1,5 @@
-export default function ProfileHeader({user}){
-    const buttonStyle = {
+export default function ProfileHeader({ user, onEdit = () => {} }) {
+  const buttonStyle = {
     padding: '12px 20px',
     border: 'none',
     borderRadius: 12,
@@ -20,23 +20,35 @@ export default function ProfileHeader({user}){
       }}
     >
 
+
       <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
 
-        <div
-          style={{
-            width: 110,
-            height: 110,
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg,#22c55e,#15803d)',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            fontSize: 48,
-            fontWeight: 800,
-            color: '#fff'
-          }}
-        >
-          {user.name.charAt(0)}
+        <div>
+          {user.avatar ? (
+            <img
+              src={user.avatar}
+              alt={`${user.name} avatar`}
+              style={{ width: 110, height: 110, borderRadius: '50%', objectFit: 'cover', border: '4px solid #22c55e' }}
+              loading="lazy"
+            />
+          ) : (
+            <div
+              style={{
+                width: 110,
+                height: 110,
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg,#22c55e,#15803d)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                fontSize: 48,
+                fontWeight: 800,
+                color: '#fff'
+              }}
+            >
+              {user.name ? user.name.charAt(0) : '?'}
+            </div>
+          )}
         </div>
 
         <div>
@@ -60,7 +72,7 @@ export default function ProfileHeader({user}){
         </div>
       </div>
 
-      <button style={buttonStyle}>
+      <button style={buttonStyle} aria-label="Edit profile" onClick={onEdit}>
         Edit Profile
       </button>
 
