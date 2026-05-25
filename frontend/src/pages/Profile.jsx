@@ -1,7 +1,8 @@
-import { useState } from "react";
-import ProfileHeader  from "../components/profile/ProfileHeader";
+import { useState } from 'react'
+import ProfileHeader from '../components/profile/ProfileHeader'
+import EditProfile from '../components/profile/EditProfile'
 export default function Profile() {
-     const [user] = useState({
+  const [user, setUser] = useState({
     name: 'Ankit Kumar',
     username: 'ankit07',
     email: 'ankit@gmail.com',
@@ -10,8 +11,11 @@ export default function Profile() {
     role: 'All Rounder',
     matches: 48,
     runs: 2190,
-    wickets: 32
+    wickets: 32,
+    avatar: ''
   })
+
+  const [editing, setEditing] = useState(false)
 
   const containerStyle = {
     minHeight: '100vh',
@@ -45,7 +49,11 @@ export default function Profile() {
     <div style={containerStyle}>
       <div style={cardStyle}>
 
-        <ProfileHeader user={user} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+          <div style={{ flex: 1 }}>
+            <ProfileHeader user={user} onEdit={() => setEditing(true)} />
+          </div>
+        </div>
 
         <div
           style={{
@@ -57,33 +65,18 @@ export default function Profile() {
         >
 
           <div style={statCard}>
-            <h3 style={{ color: '#22c55e', marginBottom: 10 }}>
-              Favorite Team
-            </h3>
-
-            <p style={{ color: '#F8FAFC', fontSize: 24, fontWeight: 700 }}>
-              {user.team}
-            </p>
+            <h3 style={{ color: '#22c55e', marginBottom: 10 }}>Favorite Team</h3>
+            <p style={{ color: '#F8FAFC', fontSize: 24, fontWeight: 700 }}>{user.team}</p>
           </div>
 
           <div style={statCard}>
-            <h3 style={{ color: '#22c55e', marginBottom: 10 }}>
-              Role
-            </h3>
-
-            <p style={{ color: '#F8FAFC', fontSize: 24, fontWeight: 700 }}>
-              {user.role}
-            </p>
+            <h3 style={{ color: '#22c55e', marginBottom: 10 }}>Role</h3>
+            <p style={{ color: '#F8FAFC', fontSize: 24, fontWeight: 700 }}>{user.role}</p>
           </div>
 
           <div style={statCard}>
-            <h3 style={{ color: '#22c55e', marginBottom: 10 }}>
-              Matches
-            </h3>
-
-            <p style={{ color: '#F8FAFC', fontSize: 24, fontWeight: 700 }}>
-              {user.matches}
-            </p>
+            <h3 style={{ color: '#22c55e', marginBottom: 10 }}>Matches</h3>
+            <p style={{ color: '#F8FAFC', fontSize: 24, fontWeight: 700 }}>{user.matches}</p>
           </div>
 
         </div>
@@ -98,38 +91,40 @@ export default function Profile() {
         >
 
           <div style={statCard}>
-            <h3 style={{ color: '#22c55e', marginBottom: 10 }}>
-              Total Runs
-            </h3>
-
-            <p style={{ color: '#F8FAFC', fontSize: 28, fontWeight: 800 }}>
-              {user.runs}
-            </p>
+            <h3 style={{ color: '#22c55e', marginBottom: 10 }}>Total Runs</h3>
+            <p style={{ color: '#F8FAFC', fontSize: 28, fontWeight: 800 }}>{user.runs}</p>
           </div>
 
           <div style={statCard}>
-            <h3 style={{ color: '#22c55e', marginBottom: 10 }}>
-              Wickets
-            </h3>
-
-            <p style={{ color: '#F8FAFC', fontSize: 28, fontWeight: 800 }}>
-              {user.wickets}
-            </p>
+            <h3 style={{ color: '#22c55e', marginBottom: 10 }}>Wickets</h3>
+            <p style={{ color: '#F8FAFC', fontSize: 28, fontWeight: 800 }}>{user.wickets}</p>
           </div>
 
           <div style={statCard}>
-            <h3 style={{ color: '#22c55e', marginBottom: 10 }}>
-              Email
-            </h3>
-
-            <p style={{ color: '#F8FAFC', fontSize: 18, fontWeight: 600 }}>
-              {user.email}
-            </p>
+            <h3 style={{ color: '#22c55e', marginBottom: 10 }}>Email</h3>
+            <p style={{ color: '#F8FAFC', fontSize: 18, fontWeight: 600 }}>{user.email}</p>
           </div>
 
         </div>
 
       </div>
+
+      {editing && (
+        <div style={{ position: 'fixed', inset: 0, display: 'grid', placeItems: 'center', background: 'rgba(0,0,0,0.5)', zIndex: 60 }}>
+          <div style={{ width: 'min(920px,95%)', padding: 20 }}>
+            <div style={{ background: 'rgba(6,8,10,0.96)', borderRadius: 12, padding: 20 }}>
+              <EditProfile
+                user={user}
+                onSave={(updated) => {
+                  setUser(updated)
+                  setEditing(false)
+                }}
+                onCancel={() => setEditing(false)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
