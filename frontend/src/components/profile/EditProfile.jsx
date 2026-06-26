@@ -212,3 +212,4 @@ export default function EditProfile({ user = {}, onSave = () => {}, onCancel = (
     </form>
   )
 }
+

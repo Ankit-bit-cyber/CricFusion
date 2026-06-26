@@ -1,5 +1,5 @@
-import {trophy} from 'lucide-react';
-import {Link} from 'rect-router-dom';
+import { Trophy } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => (
   <footer className="border-t border-brand-900/40 mt-12 py-8">
