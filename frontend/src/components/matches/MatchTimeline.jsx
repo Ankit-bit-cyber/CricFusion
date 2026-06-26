@@ -1,14 +1,13 @@
-const MatchTimeLine = ({match})=>{
-    const events = [
-        {lebel: 'Match Type', value: match?.matchType?. toUpperCase()},
-        {lebel: 'Venue', value: match?.venue},
-        {lebel: 'Date', value: match?.date},
-        {lebel: 'Series', value: match?.series},
-        {lebel: 'Toss', value: match?.tossWinner ? `${match.tossWinner} won the toss` : null },
+const MatchTimeline = ({ match }) => {
+  const events = [
+    { label: 'Match Type', value: match?.matchType?.toUpperCase() },
+    { label: 'Venue', value: match?.venue },
+    { label: 'Date', value: match?.date },
+    { label: 'Series', value: match?.series },
+    { label: 'Toss', value: match?.tossWinner ? `${match.tossWinner} won the toss` : null },
+  ].filter((e) => e.value);
 
-    ].filter((e)=> e.value);
-
-     return (
+  return (
     <div className="card p-4 space-y-3">
       <h3 className="text-sm font-semibold text-brand-400 uppercase tracking-wider">Match Info</h3>
       {events.map((e, i) => (
@@ -19,5 +18,6 @@ const MatchTimeLine = ({match})=>{
       ))}
     </div>
   );
-}
-export default MatchTimeLine;
+};
+
+export default MatchTimeline;
