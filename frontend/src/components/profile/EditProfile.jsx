@@ -1,215 +1,91 @@
-import { useState } from 'react'
+import { useState } from 'react';
+import { Camera } from 'lucide-react';
+import { updateUserApi } from '../../services/userApi';
+import { useAuth } from '../../hooks/useAuth';
+import { getAvatarUrl } from '../../utils/helpers';
+import toast from 'react-hot-toast';
 
-export default function EditProfile({ user = {}, onSave = () => {}, onCancel = () => {} }) {
-  const [form, setForm] = useState({
-    name: user.name || '',
-    username: user.username || '',
-    email: user.email || '',
-    bio: user.bio || '',
-    team: user.team || '',
-    role: user.role || '',
-    matches: user.matches || 0,
-    runs: user.runs || 0,
-    wickets: user.wickets || 0,
-    
-  })
+const EditProfile = ({ onClose }) => {
+  const { user, updateUser } = useAuth();
+  const [form, setForm] = useState({ name: user?.name || '', bio: user?.bio || '', favoriteTeam: user?.favoriteTeam || '' });
+  const [avatar, setAvatar] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState('')
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  function update(key, value) {
-    setForm(prev => ({ ...prev, [key]: value }))
-  }
+  const handleAvatar = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setAvatar(file);
+    setPreview(URL.createObjectURL(file));
+  };
 
-  function handleSubmit(e) {
-    e.preventDefault()
-    setError('')
-
-    if (!form.name.trim()) {
-      setError('Name is required')
-      return
-    }
-
-    if (!form.email.trim()) {
-      setError('Email is required')
-      return
-    }
-
-    setSaving(true)
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
     try {
-      onSave({ ...form })
+      const fd = new FormData();
+      fd.append('name', form.name);
+      fd.append('bio', form.bio);
+      fd.append('favoriteTeam', form.favoriteTeam);
+      if (avatar) fd.append('avatar', avatar);
+      const res = await updateUserApi(user._id, fd);
+      updateUser(res.data.data.user);
+      toast.success('Profile updated!');
+      onClose?.();
     } catch (err) {
-      setError('Failed to save')
+      toast.error(err.response?.data?.message || 'Update failed');
     } finally {
-      setSaving(false)
+      setLoading(false);
     }
-  }
+  };
 
-  const inputStyle = {
-    width: '100%',
-    padding: '10px 12px',
-    borderRadius: 8,
-    border: '1px solid rgba(255,255,255,0.08)',
-    background: 'transparent',
-    color: '#F8FAFC'
-  }
+  const TEAMS = ['India', 'Australia', 'England', 'Pakistan', 'South Africa', 'New Zealand', 'West Indies', 'Sri Lanka'];
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginTop: 20 }} aria-label="Edit profile form">
-      {error && (
-        <div style={{ color: '#fecaca', marginBottom: 12 }}>{error}</div>
-      )}
-
-      <div style={{ display: 'grid', gap: 12 }}>
-        <label>
-          <div style={{ color: '#94A3B8', marginBottom: 6 }}>Full name</div>
-          <input
-            style={inputStyle}
-            value={form.name}
-            onChange={e => update('name', e.target.value)}
-            placeholder="Full name"
-            aria-label="Full name"
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="flex justify-center">
+        <label className="relative cursor-pointer">
+          <img
+            src={preview || getAvatarUrl(user?.avatar, user?.name)}
+            alt=""
+            className="w-20 h-20 rounded-2xl object-cover ring-4 ring-brand-900"
           />
+          <div className="absolute inset-0 bg-black/40 rounded-2xl flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+            <Camera size={20} className="text-white" />
+          </div>
+          <input type="file" accept="image/*" onChange={handleAvatar} className="hidden" />
         </label>
+      </div>
 
-        <label>
-          <div style={{ color: '#94A3B8', marginBottom: 6 }}>Username</div>
-          <input
-            style={inputStyle}
-            value={form.username}
-            onChange={e => update('username', e.target.value)}
-            placeholder="username"
-            aria-label="Username"
-          />
-        </label>
+      <div>
+        <label className="block text-xs font-medium text-brand-600 mb-1.5">Name</label>
+        <input name="name" value={form.name} onChange={handleChange} className="input" maxLength={50} />
+      </div>
 
-        <label>
-          <div style={{ color: '#94A3B8', marginBottom: 6 }}>Email</div>
-          <input
-            type="email"
-            style={inputStyle}
-            value={form.email}
-            onChange={e => update('email', e.target.value)}
-            placeholder="you@example.com"
-            aria-label="Email"
-          />
-        </label>
+      <div>
+        <label className="block text-xs font-medium text-brand-600 mb-1.5">Bio</label>
+        <textarea name="bio" value={form.bio} onChange={handleChange} className="input resize-none" rows={3} maxLength={200} />
+        <p className="text-xs text-brand-800 mt-1">{200 - form.bio.length} chars left</p>
+      </div>
 
-        <label>
-          <div style={{ color: '#94A3B8', marginBottom: 6 }}>Bio</div>
-          <textarea
-            style={{ ...inputStyle, minHeight: 80, resize: 'vertical' }}
-            value={form.bio}
-            onChange={e => update('bio', e.target.value)}
-            placeholder="Short bio"
-            aria-label="Bio"
-          />
-        </label>
+      <div>
+        <label className="block text-xs font-medium text-brand-600 mb-1.5">Favorite Team</label>
+        <select name="favoriteTeam" value={form.favoriteTeam} onChange={handleChange} className="input">
+          <option value="">Select team</option>
+          {TEAMS.map((t) => <option key={t} value={t}>{t}</option>)}
+        </select>
+      </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-          <label>
-            <div style={{ color: '#94A3B8', marginBottom: 6 }}>Team</div>
-            <input
-              style={inputStyle}
-              value={form.team}
-              onChange={e => update('team', e.target.value)}
-              placeholder="Favorite team"
-              aria-label="Team"
-            />
-          </label>
-
-          <label>
-            <div style={{ color: '#94A3B8', marginBottom: 6 }}>Role</div>
-            <input
-              style={inputStyle}
-              value={form.role}
-              onChange={e => update('role', e.target.value)}
-              placeholder="Role"
-              aria-label="Role"
-            />
-          </label>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
-          <label>
-            <div style={{ color: '#94A3B8', marginBottom: 6 }}>Matches</div>
-            <input
-              type="number"
-              style={inputStyle}
-              value={form.matches}
-              onChange={e => update('matches', Number(e.target.value))}
-              aria-label="Matches"
-            />
-          </label>
-
-          <label>
-            <div style={{ color: '#94A3B8', marginBottom: 6 }}>Runs</div>
-            <input
-              type="number"
-              style={inputStyle}
-              value={form.runs}
-              onChange={e => update('runs', Number(e.target.value))}
-              aria-label="Runs"
-            />
-          </label>
-
-          <label>
-            <div style={{ color: '#94A3B8', marginBottom: 6 }}>Wickets</div>
-            <input
-              type="number"
-              style={inputStyle}
-              value={form.wickets}
-              onChange={e => update('wickets', Number(e.target.value))}
-              aria-label="Wickets"
-            />
-          </label>
-        </div>
-
-        <label>
-          <div style={{ color: '#94A3B8', marginBottom: 6 }}>Avatar URL</div>
-          <input
-            style={inputStyle}
-            value={form.avatar}
-            onChange={e => update('avatar', e.target.value)}
-            placeholder="https://..."
-            aria-label="Avatar URL"
-          />
-        </label>
-
-        <div style={{ display: 'flex', gap: 12, marginTop: 6 }}>
-          <button
-            type="submit"
-            disabled={saving}
-            style={{
-              padding: '10px 16px',
-              borderRadius: 10,
-              border: 'none',
-              background: 'linear-gradient(135deg,#22c55e,#16a34a)',
-              color: '#fff',
-              fontWeight: 700,
-              cursor: 'pointer'
-            }}
-          >
-            {saving ? 'Saving...' : 'Save'}
-          </button>
-
-          <button
-            type="button"
-            onClick={onCancel}
-            style={{
-              padding: '10px 16px',
-              borderRadius: 10,
-              border: '1px solid rgba(255,255,255,0.06)',
-              background: 'transparent',
-              color: '#F8FAFC',
-              cursor: 'pointer'
-            }}
-          >
-            Cancel
-          </button>
-        </div>
+      <div className="flex gap-3 pt-2">
+        <button type="button" onClick={onClose} className="btn-outline flex-1">Cancel</button>
+        <button type="submit" disabled={loading} className="btn-primary flex-1 flex items-center justify-center">
+          {loading ? <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : 'Save'}
+        </button>
       </div>
     </form>
-  )
-}
+  );
+};
 
+export default EditProfile;
