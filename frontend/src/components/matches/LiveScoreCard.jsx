@@ -1,17 +1,17 @@
-import {Link} from "react-router-dom";
+import { Link } from 'react-router-dom';
 import { Radio, ChevronRight } from 'lucide-react';
 
-const LiveScoreCard = ({match})=>{
-    const Team = match?.teams || ['Team A', 'Team B'];
-    const Score = match?.score || [];
-    const Status = match?.status || 'Live';
-    const isLive = match?.matchStarted && !match?.matchEnded;
+const LiveScoreCard = ({ match }) => {
+  const teams = match?.teams || ['Team A', 'Team B'];
+  const score = match?.score || [];
+  const status = match?.status || 'Live';
+  const isLive = match?.matchStarted && !match?.matchEnded;
 
-    return (
+  return (
     <Link
       to={`/matches/${match?.id}`}
-      className="card p-4 hover:border-brand-700/50 transition-all block group">
-        
+      className="card p-4 hover:border-brand-700/50 transition-all block group"
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-2">
@@ -40,6 +40,6 @@ const LiveScoreCard = ({match})=>{
       </div>
     </Link>
   );
-}
+};
 
 export default LiveScoreCard;

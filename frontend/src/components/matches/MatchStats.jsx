@@ -1,9 +1,9 @@
-const MatchStats = ({match})=>{
-    if(!match) return null
-    const score = match?.score || []
-    const teams = match?.teams || []
+const MatchStats = ({ match }) => {
+  if (!match) return null;
+  const score = match.score || [];
+  const teams = match.teams || [];
 
-    return (
+  return (
     <div className="card p-5 space-y-4">
       <h3 className="text-sm font-semibold text-brand-400 uppercase tracking-wider">Scorecard</h3>
       {teams.map((team, i) => (
@@ -34,5 +34,6 @@ const MatchStats = ({match})=>{
       </div>
     </div>
   );
-}
+};
+
 export default MatchStats;
