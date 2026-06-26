@@ -1,133 +1,112 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff, Mail, Lock, Trophy } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
+import { validateLogin } from '../../utils/validators';
+import toast from 'react-hot-toast';
 
-export default function Login() {
+const LoginForm = () => {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const [form, setForm] = useState({ email: '', password: '' });
+  const [errors, setErrors] = useState({});
+  const [showPw, setShowPw] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: '' });
+  };
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-
-    console.log({ email, password})
-  }
-
-  const containerStyle = {
-    minHeight: '100vh',
-    background: 'linear-gradient(135deg,#04130A 0%,#071A0F 25%,#0B2415 50%,#05080B 100%)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-    fontFamily: '"Cabinet Grotesk", sans-serif'
-  }
-
-  const cardStyle = {
-    width: '100%',
-    maxWidth: 420,
-    background: 'rgba(14,20,25,0.88)',
-    border: '1px solid rgba(255,255,255,0.08)',
-    backdropFilter: 'blur(12px)',
-    borderRadius: 24,
-    padding: 32,
-    boxShadow: '0 20px 50px rgba(0,0,0,0.4)'
-  }
-
-  const logoStyle = {
-    width: 72,
-    height: 72,
-    borderRadius: '50%',
-    background: 'linear-gradient(135deg,#22c55e,#15803d)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    fontSize: 34,
-    margin: '0 auto 18px'
-  }
-
-  const inputStyle = {
-    width: '100%',
-    marginTop: 8,
-    padding: '14px 16px',
-    borderRadius: 14,
-    border: '1px solid rgba(255,255,255,0.08)',
-    background: '#111827',
-    color: '#fff',
-    outline: 'none'
-  }
-
-  const buttonStyle = {
-    width: '100%',
-    padding: '14px',
-    borderRadius: 14,
-    border: 'none',
-    background: 'linear-gradient(135deg,#22c55e,#16a34a)',
-    color: '#fff',
-    fontWeight: 700,
-    cursor: 'pointer'
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const errs = validateLogin(form);
+    if (Object.keys(errs).length) return setErrors(errs);
+    setLoading(true);
+    try {
+      await login(form);
+      navigate('/home');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Login failed');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div style={containerStyle}>
-
-      <div style={cardStyle}>
-
-        <div style={{ textAlign: 'center', marginBottom: 30 }}>
-
-          <div style={logoStyle}>
-            🏏
-          </div>
-
-          <h1 style={{ color: '#F0F4F8', fontSize: 34, fontWeight: 800 }}>
-            Welcome Back
-          </h1>
-
-          <p style={{ color: '#94A3B8', fontSize: 14 }}>
-            Sign in to continue to CricConnect
-          </p>
-
+    <div className="w-full max-w-md">
+      <div className="flex items-center gap-3 mb-8">
+        <div className="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center">
+          <Trophy size={20} className="text-white" />
         </div>
-
-        <form onSubmit={handleSubmit}>
-
-          <div style={{ marginBottom: 20 }}>
-
-            <label style={{ color: '#CBD5E1', fontSize: 14 }}>
-              Email
-            </label>
-
-            <input type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} style={inputStyle} />
-
-          </div>
-
-          <div style={{ marginBottom: 26 }}>
-
-            <label style={{ color: '#CBD5E1', fontSize: 14 }}>
-              Password
-            </label>
-
-            <input type="password" placeholder="Enter your password" value={password} onChange={(e) => setPassword(e.target.value)} style={inputStyle} />
-
-          </div>
-
-          <button type="submit" style={buttonStyle}>
-            Sign In
-          </button>
-
-        </form>
-
-        <p style={{ textAlign: 'center', color: '#94A3B8', marginTop: 24, fontSize: 14 }}>
-
-          Don’t have an account?{' '}
-
-          <Link to="/register" style={{ color: '#4ade80', textDecoration: 'none', fontWeight: 700 }}>
-            Join Free
-          </Link>
-
-        </p>
-
+        <div>
+          <h1 className="text-2xl font-display tracking-wide text-brand-400">CricConnect</h1>
+          <p className="text-xs text-brand-700">The cricket community</p>
+        </div>
       </div>
 
+      <h2 className="text-xl font-semibold text-brand-50 mb-1">Welcome back</h2>
+      <p className="text-sm text-brand-700 mb-6">Sign in to your account</p>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-xs font-medium text-brand-600 mb-1.5">Email</label>
+          <div className="relative">
+            <Mail size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-700" />
+            <input
+              type="email"
+              name="email"
+              value={form.email}
+              onChange={handleChange}
+              placeholder="you@example.com"
+              className={`input pl-9 ${errors.email ? 'border-red-500/60' : ''}`}
+            />
+          </div>
+          {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email}</p>}
+        </div>
+
+        <div>
+          <label className="block text-xs font-medium text-brand-600 mb-1.5">Password</label>
+          <div className="relative">
+            <Lock size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-700" />
+            <input
+              type={showPw ? 'text' : 'password'}
+              name="password"
+              value={form.password}
+              onChange={handleChange}
+              placeholder="••••••••"
+              className={`input pl-9 pr-10 ${errors.password ? 'border-red-500/60' : ''}`}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPw(!showPw)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-700 hover:text-brand-400"
+            >
+              {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
+            </button>
+          </div>
+          {errors.password && <p className="text-red-400 text-xs mt-1">{errors.password}</p>}
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="btn-primary w-full py-2.5 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          {loading ? (
+            <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          ) : 'Sign In'}
+        </button>
+      </form>
+
+      <p className="text-sm text-brand-700 text-center mt-6">
+        Don't have an account?{' '}
+        <Link to="/register" className="text-brand-400 hover:text-brand-300 font-medium">
+          Sign up
+        </Link>
+      </p>
     </div>
-  )
-}
+  );
+};
+
+export default LoginForm;
