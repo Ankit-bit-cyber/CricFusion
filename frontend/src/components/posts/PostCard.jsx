@@ -4,7 +4,7 @@ import { MessageCircle, Trash2, Edit2, MoreHorizontal } from 'lucide-react';
 import { deletePostApi } from '../../services/postApi';
 import { useAuth } from '../../hooks/useAuth';
 import { getAvatarUrl } from '../../utils/helpers';
-import { timeAgo } from '../../utils/formatDate';
+import { timeAgo } from '../../utils/formatDates';
 import LikeButton from './LikeButton';
 import CommentSection from './CommentSection';
 import toast from 'react-hot-toast';

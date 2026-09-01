@@ -3,7 +3,7 @@ import { Edit2, UserCheck, UserPlus } from 'lucide-react';
 import { followUserApi } from '../../services/userApi';
 import { useAuth } from '../../hooks/useAuth';
 import { getAvatarUrl } from '../../utils/helpers';
-import { formatDate } from '../../utils/formatDate';
+import { formatDate } from '../../utils/formatDates';
 import toast from 'react-hot-toast';
 
 const ProfileHeader = ({ user: profileUser, onEdit, onFollowChange }) => {
