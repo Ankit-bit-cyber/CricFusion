@@ -4,7 +4,7 @@ import { getDiscussionApi } from '../../services/matchApi';
 import { joinMatchRoom, leaveMatchRoom, sendMatchMessage, emitTyping, getSocket } from '../../services/socketService';
 import { useAuth } from '../../hooks/useAuth';
 import { getAvatarUrl } from '../../utils/helpers';
-import { timeAgo } from '../../utils/formatDate';
+import { timeAgo } from '../../utils/formatDates';
 import Loader from '../common/Loader';
 
 const MatchDiscussion = ({ matchId }) => {
