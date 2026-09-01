@@ -2,7 +2,7 @@ import { Heart, MessageCircle, UserPlus, Radio } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { markReadApi } from '../../services/notificationApi';
 import { getAvatarUrl } from '../../utils/helpers';
-import { timeAgo } from '../../utils/formatDate';
+import { timeAgo } from '../../utils/formatDates';
 
 const icons = {
   like: <Heart size={14} className="text-red-400" />,
