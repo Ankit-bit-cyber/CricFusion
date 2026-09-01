@@ -1,13 +1,13 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 
-import Landing from '../pages/Landing';
+import Landing from '../pages/LandingPage';
 import Login from '../pages/Login';
 import Register from '../pages/Register';
 import Home from '../pages/Home';
 import Profile from '../pages/Profile';
 import MatchPage from '../pages/MatchPage';
-import Notifications from '../pages/Notifications';
+import Notifications from '../pages/Notification';
 import Settings from '../pages/Settings';
 import SearchPage from '../pages/SearchPage';
 import NotFound from '../pages/NotFound';
