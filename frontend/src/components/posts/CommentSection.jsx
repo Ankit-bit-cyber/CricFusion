@@ -3,7 +3,7 @@ import { Send, Trash2 } from 'lucide-react';
 import { addCommentApi, getCommentsApi, deleteCommentApi } from '../../services/postApi';
 import { useAuth } from '../../hooks/useAuth';
 import { getAvatarUrl } from '../../utils/helpers';
-import { timeAgo as ago } from '../../utils/formatDate';
+import { timeAgo as ago } from '../../utils/formatDates';
 import Loader from '../common/Loader';
 import toast from 'react-hot-toast';
 
